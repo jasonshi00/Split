@@ -32,7 +32,7 @@ export default function Transactions() {
   const handleAddTransaction = () => {
     if (newTransaction.trim()) {
       const newTxn = {
-        id: transactions.length + 1,
+        id: filteredTransactions.length + 1,
         merchant: newTransaction,
         amount: 0.0,
         date: new Date().toLocaleDateString(),
@@ -97,6 +97,7 @@ export default function Transactions() {
 }
 
 const styles = StyleSheet.create({
+
   container: {
     padding: 20,
     backgroundColor: "#f9f9f9",
@@ -104,6 +105,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   header: {
+    paddingTop: 30,
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 20,
