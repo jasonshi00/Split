@@ -149,6 +149,8 @@
 //   },
 // };
 import React, { useState, useEffect } from "react";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
+import { Picker } from '@react-native-picker/picker'; // Correct import for Picker
 
 const transactions = [
   { id: 1, merchant: "Ground Beef", amount: -19.99, date: "Feb 2, 2025", type: "debit", category: "Shopping" },
@@ -193,166 +195,163 @@ export default function Transactions() {
   };
 
   return (
-    <div style={styles.container}>
-      <h1 style={{ ...styles.header, textAlign: 'center' }}>Recent Transactions</h1>
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.header}>Recent Transactions</Text>
 
       {/* Category Filter */}
-      <select
-        onChange={(e) => setFilterCategory(e.target.value)}
-        value={filterCategory}
+      <Picker
+        selectedValue={filterCategory}
+        onValueChange={(itemValue) => setFilterCategory(itemValue)}
         style={styles.select}
       >
-        <option value="All">All</option>
-        <option value="Shopping">Shopping</option>
-        <option value="Income">Income</option>
-        <option value="Rent">Rent</option>
-        <option value="Transportation">Transportation</option>
-        <option value="Other">Other</option>
-      </select>
+        <Picker.Item label="All" value="All" />
+        <Picker.Item label="Shopping" value="Shopping" />
+        <Picker.Item label="Income" value="Income" />
+        <Picker.Item label="Rent" value="Rent" />
+        <Picker.Item label="Transportation" value="Transportation" />
+        <Picker.Item label="Other" value="Other" />
+      </Picker>
 
       {/* Transaction List */}
-      <div style={styles.list}>
+      <View style={styles.list}>
         {filteredTransactions.map((txn) => (
-          <div key={txn.id} style={styles.card}>
-            <div style={styles.transactionDetails}>
-              <p style={styles.merchant}>{txn.merchant}</p>
-              <p style={styles.date}>{txn.date}</p>
-            </div>
-            <span style={txn.type === "credit" ? styles.credit : styles.debit}>
+          <View key={txn.id} style={styles.card}>
+            <View style={styles.transactionDetails}>
+              <Text style={styles.merchant}>{txn.merchant}</Text>
+              <Text style={styles.date}>{txn.date}</Text>
+            </View>
+            <Text style={txn.type === "credit" ? styles.credit : styles.debit}>
               {txn.type === "credit" ? "+" : "-"}${Math.abs(txn.amount).toFixed(2)}
-            </span>
-          </div>
+            </Text>
+          </View>
         ))}
-      </div>
+      </View>
 
       {/* Add Transaction */}
-      <div style={styles.inputContainer}>
-        <input
+      <View style={styles.inputContainer}>
+        <TextInput
           value={newTransaction}
-          onChange={(e) => setNewTransaction(e.target.value)}
+          onChangeText={setNewTransaction}
           placeholder="Enter transaction"
           style={styles.input}
         />
-        <button onClick={handleAddTransaction} style={styles.addButton}>
-          Add Transaction
-        </button>
-      </div>
+        <TouchableOpacity onPress={handleAddTransaction} style={styles.addButton}>
+          <Text style={styles.addButtonText}>Add Transaction</Text>
+        </TouchableOpacity>
+      </View>
 
       {/* Category Update */}
-      <div style={styles.categoryUpdate}>
+      <View style={styles.categoryUpdate}>
         {filteredTransactions.map((txn) => (
-          <div key={txn.id} style={styles.categoryContainer}>
-            <span style={styles.transactionCategory}>Category: {categories[txn.id]}</span>
-            <select
-              value={categories[txn.id]}
-              onChange={(e) => handleCategoryChange(txn.id, e.target.value)}
+          <View key={txn.id} style={styles.categoryContainer}>
+            <Text style={styles.transactionCategory}>Category: {categories[txn.id]}</Text>
+            <Picker
+              selectedValue={categories[txn.id]}
+              onValueChange={(value) => handleCategoryChange(txn.id, value)}
               style={styles.select}
             >
-              <option value="Shopping">Shopping</option>
-              <option value="Income">Income</option>
-              <option value="Rent">Rent</option>
-              <option value="Transportation">Transportation</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
+              <Picker.Item label="Shopping" value="Shopping" />
+              <Picker.Item label="Income" value="Income" />
+              <Picker.Item label="Rent" value="Rent" />
+              <Picker.Item label="Transportation" value="Transportation" />
+              <Picker.Item label="Other" value="Other" />
+            </Picker>
+          </View>
         ))}
-      </div>
-    </div>
+      </View>
+    </ScrollView>
   );
 }
 
-// Styles with responsive, mobile-friendly adjustments
-const styles = {
+const styles = StyleSheet.create({
   container: {
-    padding: "20px",
-    fontFamily: "Arial, sans-serif",
-    maxWidth: "600px",
-    margin: "0 auto",
+    padding: 20,
     backgroundColor: "#f9f9f9",
-    borderRadius: "8px",
-    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+    borderRadius: 8,
+    flexGrow: 1,
   },
   header: {
-    fontSize: "24px",
-    marginBottom: "20px",
-    textAlign: 'center' as 'center', // Explicitly define 'center' type
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 20,
+    textAlign: "center",
   },
   select: {
-    padding: "8px",
+    padding: 10,
     width: "100%",
-    borderRadius: "4px",
-    marginBottom: "20px",
-    border: "1px solid #ccc",
+    borderRadius: 4,
+    marginBottom: 20,
+    borderColor: "#ccc",
+    borderWidth: 1,
   },
   list: {
-    marginTop: "20px",
+    marginTop: 20,
   },
   card: {
-    display: "flex",
+    flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: "15px",
+    padding: 15,
     backgroundColor: "#fff",
-    marginBottom: "10px",
-    borderRadius: "8px",
+    marginBottom: 10,
+    borderRadius: 8,
     boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
   },
   transactionDetails: {
-    display: "flex" as "flex",
-    flexDirection: "column" as "column", // Explicitly define 'column' type for flexDirection
-    justifyContent: "center" as "center", // Explicitly define 'center' type for justifyContent
+    flexDirection: "column",
+    justifyContent: "center",
   },
   merchant: {
     fontWeight: "bold",
-    fontSize: "16px",
-    margin: "0",
+    fontSize: 16,
   },
   date: {
     color: "#888",
-    fontSize: "14px",
+    fontSize: 14,
   },
   debit: {
     color: "red",
-    fontSize: "18px",
+    fontSize: 18,
     fontWeight: "bold",
   },
   credit: {
     color: "green",
-    fontSize: "18px",
+    fontSize: 18,
     fontWeight: "bold",
   },
   inputContainer: {
-    display: "flex",
-    flexDirection: "column" as "column", // Explicitly define 'column' type for flexDirection
-    marginTop: "20px",
+    flexDirection: "column",
+    marginTop: 20,
   },
   input: {
-    padding: "12px",
-    fontSize: "16px",
-    marginBottom: "10px",
-    borderRadius: "4px",
-    border: "1px solid #ccc",
+    padding: 12,
+    fontSize: 16,
+    marginBottom: 10,
+    borderRadius: 4,
+    borderColor: "#ccc",
+    borderWidth: 1,
     width: "100%",
   },
   addButton: {
-    padding: "12px",
+    padding: 12,
     backgroundColor: "#4CAF50",
+    borderRadius: 4,
+    alignItems: "center",
+  },
+  addButtonText: {
     color: "#fff",
-    border: "none",
-    borderRadius: "4px",
-    cursor: "pointer",
-    fontSize: "16px",
+    fontSize: 16,
   },
   categoryUpdate: {
-    marginTop: "20px",
+    marginTop: 20,
   },
   categoryContainer: {
-    display: "flex" as "flex",
+    flexDirection: "row",
     alignItems: "center",
-    marginBottom: "15px",
+    marginBottom: 15,
   },
   transactionCategory: {
     fontWeight: "bold",
-    marginRight: "10px",
+    marginRight: 10,
   },
-};
+});
